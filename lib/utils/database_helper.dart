@@ -26,6 +26,7 @@ class DatabaseHelper {
       io.Directory documentDirectory = await getApplicationDocumentsDirectory();
 
       String path = join(documentDirectory.path, 'members.db');
+      print(path);
 
       await _lock.synchronized(() async {
         if (_db == null) {
@@ -42,5 +43,30 @@ class DatabaseHelper {
     // Create table
     await dbClient.rawQuery(sqlCreate);
     print('Table is created');
+  }
+
+  Future getList() async {
+    var dbClient = await getDb();
+    var sql = '''
+    SELECT * from members
+    ''';
+    return await dbClient.rawQuery(sql);
+  }
+
+  Future saveData(Map member) async {
+    var dbClient = await getDb();
+    String sql = '''
+    INSERT INTO members(first_name,last_name,email,telephone,birth_date)
+    VALUES(?,?,?,?,?)
+    ''';
+    // Create table
+    await dbClient.rawQuery(sql, [
+      member['firstName'],
+      member['lastName'],
+      member['email'],
+      member['telephone'],
+      member['birthDate']
+    ]);
+    print('save');
   }
 }

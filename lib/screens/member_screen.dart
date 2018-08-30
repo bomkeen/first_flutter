@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:my_app/utils/database_helper.dart';
 
 class MemberScreen extends StatefulWidget {
   @override
@@ -6,13 +9,40 @@ class MemberScreen extends StatefulWidget {
 }
 
 class _MemberScreenState extends State<MemberScreen> {
+  DatabaseHelper databaseHelper = DatabaseHelper.internal();
+  List members = [];
+  Future getMembers() async {
+    var res = await databaseHelper.getList();
+    print(res);
+    setState(() {
+      members = res;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getMembers();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Member'),
       ),
-      body: ListView(),
+      body: ListView.builder(
+          itemBuilder: (context, int index) {
+            return ListTile(
+              onTap: () {},
+              title: Text(
+                  '${members[index]['first_name']}${members[index]['last_name']}'),
+              subtitle: Text('${members[index]['email']}'),
+              trailing: Icon(Icons.keyboard_arrow_right),
+            );
+          },
+          itemCount: members != null ? members.length : 0),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.of(context).pushNamed('/add-member'),
         child: Icon(Icons.person_add),

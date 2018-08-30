@@ -9,6 +9,7 @@ import 'package:my_app/screens/page_one.dart';
 import 'package:my_app/screens/users_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_app/utils/database_helper.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   DatabaseHelper databaseHelper = DatabaseHelper.internal();
@@ -20,6 +21,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('th', 'TH'), // English
+      ],
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           fontFamily: 'Lamoon',
