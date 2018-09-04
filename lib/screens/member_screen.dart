@@ -19,6 +19,11 @@ class _MemberScreenState extends State<MemberScreen> {
     });
   }
 
+  Future removeMembers(int id) async {
+    await databaseHelper.remove(id);
+    getMembers();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -35,12 +40,13 @@ class _MemberScreenState extends State<MemberScreen> {
       body: ListView.builder(
           itemBuilder: (context, int index) {
             return ListTile(
-              onTap: () {},
-              title: Text(
-                  '${members[index]['first_name']}${members[index]['last_name']}'),
-              subtitle: Text('${members[index]['email']}'),
-              trailing: Icon(Icons.keyboard_arrow_right),
-            );
+                onTap: () {},
+                title: Text(
+                    '${members[index]['first_name']}${members[index]['last_name']}'),
+                subtitle: Text('${members[index]['email']}'),
+                trailing: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () => removeMembers(members[index]['id'])));
           },
           itemCount: members != null ? members.length : 0),
       floatingActionButton: FloatingActionButton(

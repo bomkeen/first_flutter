@@ -61,6 +61,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
           'birthDate': birthDate.toString(),
         };
         await databaseHelper.saveData(member);
+
 //        print('ok');
       } else {
         print('Faile');
@@ -80,7 +81,12 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
       appBar: AppBar(
         title: Text('Add new member'),
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.save), onPressed: () => saveData())
+          IconButton(
+              icon: Icon(Icons.save),
+              onPressed: () {
+                saveData();
+                Navigator.of(context).pop({'id': 1000, 'name': 'peeragad'});
+              })
         ],
       ),
       body: ListView(

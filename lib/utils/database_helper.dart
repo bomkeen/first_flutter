@@ -53,6 +53,14 @@ class DatabaseHelper {
     return await dbClient.rawQuery(sql);
   }
 
+  Future remove(int id) async {
+    var dbClient = await getDb();
+    var sql = '''
+    DELETE from members where id=?
+    ''';
+    return await dbClient.rawQuery(sql, [id]);
+  }
+
   Future saveData(Map member) async {
     var dbClient = await getDb();
     String sql = '''
