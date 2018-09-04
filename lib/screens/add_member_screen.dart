@@ -85,7 +85,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
               icon: Icon(Icons.save),
               onPressed: () {
                 saveData();
-                Navigator.of(context).pop({'id': 1000, 'name': 'peeragad'});
+                Navigator.of(context).pushNamed('/member');
               })
         ],
       ),
