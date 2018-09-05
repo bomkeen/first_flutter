@@ -61,7 +61,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
           'birthDate': birthDate.toString(),
         };
         await databaseHelper.saveData(member);
-
+        Navigator.of(context).pop({'ok': true});
 //        print('ok');
       } else {
         print('Faile');
@@ -85,7 +85,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
               icon: Icon(Icons.save),
               onPressed: () {
                 saveData();
-                Navigator.of(context).pop({'id': 1000, 'name': 'peeragad'});
+//                Navigator.of(context).pop({'id': 1000, 'name': 'peeragad'});
               })
         ],
       ),
