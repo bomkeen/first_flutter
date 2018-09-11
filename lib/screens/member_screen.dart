@@ -1,5 +1,6 @@
 import 'dart:async';
-
+import 'package:barcode_scan/barcode_scan.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:my_app/screens/add_member_screen.dart';
 import 'package:my_app/utils/database_helper.dart';
@@ -12,6 +13,8 @@ class MemberScreen extends StatefulWidget {
 class _MemberScreenState extends State<MemberScreen> {
   DatabaseHelper databaseHelper = DatabaseHelper.internal();
   List members = [];
+
+  String barcode;
   Future getMembers() async {
     var res = await databaseHelper.getList();
     print(res);
@@ -39,7 +42,10 @@ class _MemberScreenState extends State<MemberScreen> {
           ),
           actions: <Widget>[
             new FlatButton(
-              child: new Text('ยืนยัน'),
+              child: new Text(
+                'ยืนยัน',
+                style: TextStyle(fontSize: 20.0, color: Colors.red),
+              ),
               onPressed: () async {
                 await databaseHelper.remove(id);
                 getMembers();
@@ -50,11 +56,14 @@ class _MemberScreenState extends State<MemberScreen> {
               },
             ),
             new FlatButton(
-                color: Colors.red,
+//                color: Colors.red,
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('ยกเลิก')),
+                child: Text(
+                  'ยกเลิก',
+                  style: TextStyle(fontSize: 20.0, color: Colors.green),
+                )),
           ],
         );
       },
@@ -69,15 +78,50 @@ class _MemberScreenState extends State<MemberScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Future scan() async {
+      try {
+        String barcode = await BarcodeScanner.scan();
+//        setState(() => this.barcode = barcode);
+        print('-------------------');
+        print(barcode);
+        print('-------------------');
+      } on PlatformException catch (e) {
+        if (e.code == BarcodeScanner.CameraAccessDenied) {
+          setState(() {
+            this.barcode = 'The user did not grant the camera permission!';
+          });
+        } else {
+          setState(() => this.barcode = 'Unknown error: $e');
+        }
+      } on FormatException {
+        setState(() => this.barcode =
+            'null (User returned using the "back"-button before scanning anything. Result)');
+      } catch (e) {
+        setState(() => this.barcode = 'Unknown error: $e');
+      }
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Member'),
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.photo_camera), onPressed: () => scan())
+        ],
       ),
       body: ListView.builder(
           itemBuilder: (context, int index) {
             return ListTile(
-                onTap: () {},
+                onTap: () async {
+                  var response = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              AddMemberScreen(members[index]['id'])));
+                  if (response != null) {
+                    getMembers();
+                  }
+                },
                 title: Text(
                     '${members[index]['first_name']}${members[index]['last_name']}'),
                 subtitle: Text('${members[index]['email']}'),
@@ -92,7 +136,7 @@ class _MemberScreenState extends State<MemberScreen> {
         //// ใช้แบบนี เพราะมีการส่งค่า กลับบมา ตอนกด save
         onPressed: () async {
           var response = await Navigator.push(context,
-              MaterialPageRoute(builder: (context) => AddMemberScreen()));
+              MaterialPageRoute(builder: (context) => AddMemberScreen(null)));
           if (response != null) {
             getMembers();
           }

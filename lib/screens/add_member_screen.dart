@@ -5,11 +5,17 @@ import 'package:intl/intl.dart';
 import 'package:my_app/utils/database_helper.dart';
 
 class AddMemberScreen extends StatefulWidget {
+  var id;
+  AddMemberScreen(this.id);
+
   @override
-  _AddMemberScreenState createState() => _AddMemberScreenState();
+  _AddMemberScreenState createState() => _AddMemberScreenState(id);
 }
 
 class _AddMemberScreenState extends State<AddMemberScreen> {
+  var id;
+  _AddMemberScreenState(this.id);
+
   DatabaseHelper databaseHelper = DatabaseHelper.internal();
   DateTime birthDate;
   String strBirthDate;
@@ -20,7 +26,33 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
   TextEditingController ctrTelephone = TextEditingController();
   String sex = 'ชาย';
   bool isActive = true;
+
+  Future getDetail(int id) async {
+    var res = await databaseHelper.getDetail(id);
+    var detail = res[0];
+    setState(() {
+      ctrEmailName.text = detail['email'];
+      ctrFirstName.text = detail['first_name'];
+      ctrLastName.text = detail['last_name'];
+      ctrTelephone.text = detail['telephone'];
+      String _birth = detail['birth_date'];
+      DateTime _birthDate = DateTime.parse(_birth);
+      var strDate = new DateFormat.MMMMd('th_TH').format(
+          new DateTime(_birthDate.year, _birthDate.month, _birthDate.day));
+      strBirthDate = '$strDate ${_birthDate.year+543}';
+      birthDate = _birthDate;
+      print(ctrFirstName.text);
+    });
+  }
+
   @override
+  void initState() {
+    super.initState();
+    if (id != null) {
+      getDetail(id);
+    }
+  }
+
   Widget build(BuildContext context) {
     DateTime _currentDate;
     int _year = DateTime.now().year;
@@ -59,8 +91,13 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
           'email': ctrEmailName.text,
           'telephone': ctrTelephone.text,
           'birthDate': birthDate.toString(),
+          'id': id
         };
-        await databaseHelper.saveData(member);
+        if (id != null) {
+          await databaseHelper.updateData(member);
+        } else {
+          await databaseHelper.saveData(member);
+        }
         Navigator.of(context).pop({'ok': true});
 //        print('ok');
       } else {

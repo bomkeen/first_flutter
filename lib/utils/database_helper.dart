@@ -53,6 +53,14 @@ class DatabaseHelper {
     return await dbClient.rawQuery(sql);
   }
 
+  Future getDetail(int id) async {
+    var dbClient = await getDb();
+    var sql = '''
+    SELECT * FROM members where id=?
+    ''';
+    return await dbClient.rawQuery(sql, [id]);
+  }
+
   Future remove(int id) async {
     var dbClient = await getDb();
     var sql = '''
@@ -76,5 +84,23 @@ class DatabaseHelper {
       member['birthDate']
     ]);
     print('save');
+  }
+
+  Future updateData(Map member) async {
+    var dbClient = await getDb();
+    String sql = '''
+    UPDATE members SET first_name=?,last_name=?,email=?,telephone=?,birth_date=?
+    WHERE id=?
+    ''';
+    // Create table
+    await dbClient.rawQuery(sql, [
+      member['firstName'],
+      member['lastName'],
+      member['email'],
+      member['telephone'],
+      member['birthDate'],
+      member['id']
+    ]);
+    print('update!!!!!');
   }
 }

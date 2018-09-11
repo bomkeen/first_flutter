@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
         '/detail': (BuildContext context) => PageOne(),
         '/userlist': (BuildContext context) => UsersScreen(),
         '/member': (BuildContext context) => MemberScreen(),
-        '/add-member': (BuildContext context) => AddMemberScreen(),
+        '/add-member': (BuildContext context) => AddMemberScreen(null),
       },
     );
   }
